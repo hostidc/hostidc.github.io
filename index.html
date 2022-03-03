@@ -8,7 +8,6 @@
 <span id="temp"></span>
 <div class="infoboxp">
 <div class="subnav">
-<form action="" method="post"> 
 <div class="content-menu ib-a blue line-x">&nbsp;</div>
 <div class="content-menu ib-a blue line-x">
 <strong><a href="./index.html" style=" text-decoration: none; "><font color="black">计划任务</font></a>&nbsp;<strong>
@@ -89,36 +88,20 @@
 <a target="_blank" style=" text-decoration: none; " href="https://ted2srt.org/">ted2srt</a>&nbsp;
 <a target="_blank" style=" text-decoration: none; " href="https://www.redownloader.com/">redownloader</a>&nbsp;
 </div>  
+
+<script type="text/javascript" src="domain.json"></script>
 <div class="content-menu ib-a blue line-x">&nbsp;</div>
-<div class="content-menu ib-a blue line-x"><strong>添加域名</strong>&nbsp;&nbsp;域名：<input class="input-text"
-    type="text" name="advername" size="35" />&nbsp;&nbsp;<input
-    type="submit" class="subbut" name="addadvertise" value=" 添加域名 " /></div>
-</form>
-</div>
-<div class="content-menu ib-a blue line-x">&nbsp;</div>
-<div class="table-list">
-<table>
-<thead>
-    <tr>
-        <th>域名编号</th>
-        <th>域名</th>
-        <th width="80">操作</th>
-        <th width="200" style="text-align:left">有效性</th>
-    </tr>
-</thead>
-<tbody>
-<form action="" method="post">
-<tr align="center" class="0" uid="1">
-<td class="ud">0</td>
-<td class="ud">域名：<input type="text" name="updateadver"
-value="abc.com" size="40" />
-<input type="hidden" name="id" value="0" /></td>
-<td class="ud"><A href="./index.html?delid=0">删除</A></td>
-<td  width="200" style="text-align:left">检查：<a target=_blank href="http://www.now.cn/whois/info.php?chrDomain=abc.com" />abc.com</a></td>
-</tr>
-</form>
-</tbody>
-</table>
+优质域名<br>
+<script type="text/javascript">
+console.log(jsonData.domains);
+var json = jsonData.domains;
+ for(var i=0,l=json.length;i<l;i++){
+    for(var key in json[i]){
+        //alert(json[i][key]);
+		document.write("<a target=_blank href='http://www.now.cn/whois/info.php?chrDomain="+json[i][key]+"'>"+json[i][key]+"</a>&nbsp;&nbsp;&nbsp;&nbsp;")
+    }
+}
+</script>
 </div>
 </div>
 </body>

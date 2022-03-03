@@ -1,0 +1,8 @@
+var jsonData = {
+"domains" : [
+{"domains" : "abc.com"},
+{"domains" : "token.com"},
+{"domains" : "chain.com"},
+{"domains" : "nft.com"},
+]
+};
