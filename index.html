@@ -91,9 +91,8 @@
 
 <script type="text/javascript" src="domain.json"></script>
 <div class="content-menu ib-a blue line-x">&nbsp;</div>
-优质域名<br>
+优质域名:<br>
 <script type="text/javascript">
-console.log(jsonData.domains);
 var json = jsonData.domains;
  for(var i=0,l=json.length;i<l;i++){
     for(var key in json[i]){
@@ -103,7 +102,21 @@ var json = jsonData.domains;
 			document.write("<br/>");
 		}
 	}
-}
+  }
+</script>
+
+<div class="content-menu ib-a blue line-x">&nbsp;</div>
+Links:<br>
+<script type="text/javascript">
+ for(var i=0,l=json.length;i<l;i++){
+    for(var key in json[i]){
+        //alert(json[i][key]);
+		document.write("<a target=_blank href='http://www."+json[i][key]+"'>"+json[i][key]+"</a>&nbsp;&nbsp;&nbsp;&nbsp;")
+		if(i%10==0 && !(i==0)){
+			document.write("<br/>");
+		}
+	}
+  }
 </script>
 </div>
 </div>
