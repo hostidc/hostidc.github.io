@@ -16,3 +16,4 @@ https://colab.research.google.com/github/hostidc/hostidc.github.io/blob/master/c
 https://colab.research.google.com/github/hostidc/hostidc.github.io/blob/master/colab/StableDiffusionWebUIColabTW0408.ipynb
 https://colab.research.google.com/github/hostidc/hostidc.github.io/blob/master/colab/StableDiffusionWebUIColabTW0410.ipynb
 
+https://colab.research.google.com/github/hostidc/hostidc.github.io/blob/master/colab/StableDiffusionWebUIColabTW0411.ipynb 修改版
