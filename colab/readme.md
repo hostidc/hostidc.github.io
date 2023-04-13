@@ -20,3 +20,4 @@ https://colab.research.google.com/github/hostidc/hostidc.github.io/blob/master/c
 https://colab.research.google.com/github/hostidc/hostidc.github.io/blob/master/colab/StableDiffusionWebUIColabTW0412.ipynb 修改版
 https://colab.research.google.com/github/hostidc/hostidc.github.io/blob/master/colab/StableDiffusionWebUIColabTW0413.ipynb 修改版
 https://colab.research.google.com/github/hostidc/hostidc.github.io/blob/master/colab/StableDiffusionWebUIColabTW0413fixnohalf.ipynb revAmine修改版
+https://colab.research.google.com/github/hostidc/hostidc.github.io/blob/master/colab/StableDiffusionWebUIColabTW0414.ipynb revAmine修改版
