@@ -8,11 +8,14 @@
   "testkf": {
     "file_name": "testkf.json"
   },
-  "kfdata_test": {
+  "lee3251/kfdata_test": {
     "hf_hub_url": "lee3251/kfdata_test"
   },
-  "HealthCareMagic": {
+  "lee3251/HealthCareMagic": {
     "hf_hub_url": "lee3251/HealthCareMagic"
+  },
+  "lee3251/new_data": {
+    "hf_hub_url": "lee3251/new_data"
   },
   "alpaca_en_demo": {
     "file_name": "alpaca_en_demo.json"
