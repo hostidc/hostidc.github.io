@@ -17,6 +17,9 @@
   "lee3251/new_data": {
     "hf_hub_url": "lee3251/new_data"
   },
+  "lee3251/new_data_test": {
+    "hf_hub_url": "lee3251/new_data_test"
+  },
   "alpaca_en_demo": {
     "file_name": "alpaca_en_demo.json"
   },
