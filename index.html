@@ -157,7 +157,7 @@ var json = jsonData.domains;
  for(var i=0,l=json.length;i<l;i++){
     for(var key in json[i]){
         //alert(json[i][key]);
-		document.write("<a target=_blank href='http://www.now.cn/whois/info.php?chrDomain="+json[i][key]+"'>"+json[i][key]+"</a>&nbsp;&nbsp; ")
+		document.write("<a target=_blank href='https://whois.west.cn/"+json[i][key]+"'>"+json[i][key]+"</a>&nbsp;&nbsp; ")
 		if(i%10==0 && !(i==0)){
 			//document.write("<br/>");
 		}
