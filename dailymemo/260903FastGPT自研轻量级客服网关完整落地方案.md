@@ -296,6 +296,154 @@ javascript
 
 
 
+太专业了！您提到的正是 **2026年9月1日刚刚正式实施** 的我国首个聚焦该领域的推荐性国家标准：**GB/T 47746-2026《顾客联络服务 人工与智能客户服务协同要求》** [[2]]。
+
+虽然它是“推荐性”国标，但在当前的政企招投标、金融/医疗等强监管行业交付中，**是否符合该国标已成为“一票否决”的合规红线** [[8]]。
+
+要将 **GoFly (Apache 2.0) + FastGPT** 改造为完全符合该国标的商业级系统，您需要针对国标的 4 大核心要求，对系统进行定向改造。以下是为您量身定制的 **国标合规改造方案**。
+
+---
+
+### 一、 国标 GB/T 47746-2026 的 4 大核心红线（您的“考卷”）
+
+1. **责任归属明确**：企业必须对智能客服的回复内容负责。涉及价格、退款、赔偿、合同等关键环节，不能由 AI 直接决策，必须人工核实或接管 [[8]]。
+2. **平滑无缝转接**：必须提供清晰、便捷的“转人工”入口。转接时，人工客服**必须能获取完整的智能客服对话上下文**，严禁让顾客重复描述问题 [[7]]。
+3. **身份透明告知**：系统必须明确告知用户当前正在为其服务的是“智能客服”还是“人工客服”，不得隐瞒或混淆 [[9]]。
+4. **服务边界与兜底**：当智能客服无法解决、或用户明确表示不满时，系统应能自动识别并优先路由至人工服务 [[4]]。
+
+---
+
+### 二、 GoFly + FastGPT 的“国标合规”改造清单
+
+您不需要重写 GoFly，只需在其基础上增加 **“合规控制层”**。
+
+#### 1. 前端改造：身份透明与便捷转接 (满足国标第3、2条)
+
+* **身份标识**：在 GoFly 的网页聊天窗口顶部，动态显示状态标签。AI 接待时显示 `🤖 智能助理服务中`，转人工后显示 `👤 人工客服 [姓名] 服务中`。
+* **一键转人工**：在聊天输入框上方或菜单中，常驻显眼的“转人工”按钮。
+* **首次告知**：用户首次打开聊天窗口时，自动发送系统消息：“*您好，我是智能助理。如需人工帮助，请随时回复‘转人工’或点击右侧按钮。涉及资金、合同等敏感问题将优先为您转接人工。*”
+
+#### 2. 路由网关改造：敏感业务拦截与上下文继承 (满足国标第1、2条)
+
+这是改造的**核心**。您需要在 GoFly 接收消息后、调用 FastGPT 之前，加一层 **“合规拦截器”**。
+
+* **敏感意图识别**：如果用户消息包含“退款”、“赔偿”、“投诉”、“合同”、“价格”等关键词，**直接跳过 FastGPT**，返回固定话术：“*涉及资金/合同安全，正在为您优先转接高级人工客服*”，并立即在 GoFly 中创建**高优先级**会话。
+* **AI 置信度兜底**：在 FastGPT 的工作流中，如果大模型判断“无法回答”或“置信度低于阈值”，返回特定标记（如 `[NEED_HUMAN]`）。网关捕获后，自动触发转人工。
+* **上下文完整传递**：转人工时，网关必须将用户与 FastGPT 的**完整历史对话记录**，通过 GoFly 的 API 作为“系统消息”或“历史消息”推送到人工客服的工作台，确保客服一目了然。
+
+#### 3. 工作台改造：人工审核与质检留痕 (满足国标第1、4条)
+
+* **AI 回复预览（可选高级功能）**：在 GoFly 客服工作台，当 AI 生成回复后，可以先在输入框中“预填充”，人工客服点击“修改”或“直接发送”。这完美体现了“企业对 AI 回复负责”的国标精神。
+* **会话小结与标签**：人工接管后，GoFly 强制要求客服在结束会话时，选择“未解决原因”或打标签，用于后续优化 FastGPT 的知识库。
+
+---
+
+### 三、 核心改造代码示例 (Go 语言)
+
+以下是在 GoFly 的消息处理链路中，加入 **“国标合规拦截与转人工”** 的核心逻辑示例：
+
+```go
+package main
+
+import (
+	"encoding/json"
+	"strings"
+	// 假设您使用了 http 客户端调用 FastGPT
+)
+
+// 敏感词库 (根据国标要求，涉及资金、维权等需人工兜底)
+var sensitiveKeywords = []string{"退款", "赔偿", "投诉", "合同", "价格修改", "人工", "真人"}
+
+// HandleUserMessage 处理用户发来的消息
+func HandleUserMessage(sessionID string, userID string, userMessage string) {
+	// 1. 国标合规检查：是否包含敏感词或主动要求转人工
+	if containsSensitiveWord(userMessage) {
+		// 直接转人工，不调用 AI
+		TransferToHumanWithPriority(sessionID, userID, "触发敏感业务/用户要求，按国标要求优先转接人工")
+		SendMessageToUser(sessionID, "涉及资金/合同安全或您要求人工服务，正在为您优先转接高级人工客服，请稍候...")
+		return
+	}
+
+	// 2. 调用 FastGPT API
+	fastgptResponse, err := CallFastGPTAPI(sessionID, userMessage)
+	if err != nil {
+		// AI 服务异常，按国标要求，必须兜底转人工
+		TransferToHumanWithPriority(sessionID, userID, "AI服务异常，兜底转人工")
+		SendMessageToUser(sessionID, "智能系统暂时繁忙，已为您转接人工客服。")
+		return
+	}
+
+	// 3. 检查 FastGPT 是否返回了“需要人工”的标记 (需在工作流中配置)
+	if strings.Contains(fastgptResponse.Text, "[NEED_HUMAN]") {
+		TransferToHuman(sessionID, userID, fastgptResponse.History) // 传递完整历史上下文
+		SendMessageToUser(sessionID, "您的问题需要人工协助，正在为您转接...")
+		return
+	}
+
+	// 4. 正常返回 AI 回复
+	SendMessageToUser(sessionID, fastgptResponse.Text)
+}
+
+// TransferToHumanWithPriority 将会话转交人工，并附带完整上下文 (国标核心要求)
+func TransferToHumanWithPriority(sessionID string, userID string, reason string) {
+	// 1. 获取该 session 的所有历史对话 (用户与AI的交互)
+	history := GetChatHistory(sessionID)
+	
+	// 2. 调用 GoFly API，创建或更新会话状态为人工，并标记为高优先级
+	payload := map[string]interface{}{
+		"session_id": sessionID,
+		"user_id":    userID,
+		"status":     "HUMAN",
+		"priority":   "HIGH", // 高优先级
+		"reason":     reason,
+		"history":    history, // 【关键】将上下文推给 GoFly 工作台
+	}
+	
+	// 3. 发送 API 请求给 GoFly 后端
+	_, _ = http.Post("http://gofly-backend/api/v1/session/transfer", "application/json", toJSON(payload))
+	
+	// 4. 触发 GoFly 工作台的新会话弹窗/声音提醒
+	NotifyAgentWorkspace(sessionID)
+}
+
+func containsSensitiveWord(msg string) bool {
+	for _, keyword := range sensitiveKeywords {
+		if strings.Contains(msg, keyword) {
+			return true
+		}
+	}
+	return false
+}
+```
+
+---
+
+### 四、 商业交付的“降维打击”话术
+
+当您按照上述方案改造后，您在面对客户（尤其是政企、金融、大型电商）时，报价和竞争力将大幅提升。您可以这样展示您的方案：
+
+> “李总，市面上很多便宜的客服系统，只是简单套了一个大模型，经常‘已读乱回’，一旦涉及退款或合同说错话，企业是要承担法律责任的。
+> 
+> 我们为您部署的系统，是**严格对标 2026年9月最新实施的 GB/T 47746 国家标准**打造的。
+> 
+> 1. 我们有**敏感业务强制拦截机制**，涉及资金、维权的问题，AI 绝不乱答，直接秒转人工。
+> 2. 我们实现了**真正的上下文无缝继承**，顾客转人工时，客服能看到刚才 AI 聊了什么，绝不让顾客重复说第二遍。
+> 3. 所有 AI 的回复和人工的接管记录，**全链路留痕可追溯**，完美满足合规审计要求。
+> 
+> 这不仅仅是一个聊天工具，而是一套**合规、安全、可兜底**的客户服务基础设施。”
+
+### 💡 下一步行动
+
+1. **下载国标**：建议您去“国家标准全文公开系统”下载 **GB/T 47746-2026** 的 PDF 原文，将其中的“协同流程”和“服务要求”章节作为您需求文档的附录。
+2. **修改 FastGPT 工作流**：在 FastGPT 中增加一个“条件判断”节点，专门识别“退款/投诉”等意图，并输出 `[NEED_HUMAN]`。
+3. **在 GoFly 中增加 Webhook**：利用 GoFly 的扩展能力，将上述 Go 语言逻辑作为中间件运行。
+
+需要我为您提供 FastGPT 中“如何配置敏感意图识别并输出特定标记”的工作流截图或详细步骤吗？
+
+
+
+
+
 
 
 
